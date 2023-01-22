@@ -9,6 +9,8 @@ import re
 from typing import List, Tuple, Set
 import zipfile
 
+
+# Change these configurations
 PATH_ARTIFACTS_CSV = 'artifacts.csv'
 PATH_ACMCMS_TOC_XML = 'acmcms-toc.xml'
 PATH_OUTPUT = 'output'
@@ -95,40 +97,40 @@ def main() -> None:
 
 def create_manifest_xml(doi_prefix: str) -> BeautifulSoup:
     doc = BeautifulSoup(features='xml')
-    # <!DOCTYPE>
+    # /!DOCTYPE
     doc.append(bs4.Doctype('submission PUBLIC "-//Atypon//DTD Literatum Content Submission Manifest DTD v4.2 20140519//EN" "atypon/submissionmanifest.4.2.dtd"'))
-    # <submission>
+    # /submission
     el_0 = append_tag(doc, doc, 'submission', attrs={'group-doi': f'{doi_prefix}/artifacts-group', 'submission-type': 'full'})
-    # <submission><callback>
+    # /submission/callback
     el_1 = append_tag(doc, el_0, 'callback')
-    # <submission><callback><email>
+    # /submission/callback/email
     append_tag(doc, el_1, 'email').append(CALLBACK_EMAIL)
-    # <submission><processing-instructions>
+    # /submission/processing-instructions
     el_1 = append_tag(doc, el_0, 'processing-instructions')
-    # <submission><processing-instructions><make-live>
+    # /submission/processing-instructions/make-live
     append_tag(doc, el_1, 'make-live', attrs={'on-condition': 'no-fatals'})
     return doc
 
 
 def create_zenodo_xml(paper: bs4.Tag, doi_prefix: str, doi_full: str, badges: Set[str]) -> bs4.Tag:
     doc = BeautifulSoup(features='xml')
-    # <mets>
+    # /mets
     el_0 = append_tag(doc, doc, 'mets', attrs={'xmlns': 'http://www.loc.gov/METS/', 'xmlns:xlink': 'http://www.w3.org/1999/xlink', 'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation': 'http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd', 'TYPE': 'artifact-doe'})
-    # <mets><mets:dmdSec>
+    # /mets/mets:dmdSec
     el_1 = append_tag(doc, el_0, 'mets:dmdSec', attrs={'xmlns:mets': 'http://www.loc.gov/METS/', 'ID': 'DMD'})
-    # <mets><mets:dmdSec><mets:mdWrap>
+    # /mets/mets:dmdSec/mets:mdWrap
     el_2 = append_tag(doc, el_1, 'mets:mdWrap', attrs={'MDTYPE': 'MODS'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData
     el_3 = append_tag(doc, el_2, 'mets:xmlData')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods
     el_4 = append_tag(doc, el_3, 'mods', attrs={'xmlns': 'http://www.loc.gov/mods/v3', 'xsi:schemaLocation': 'http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods.xsd'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:identifier>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:identifier
     append_tag(doc, el_4, 'mods:identifier', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'type': 'doi'}).append(doi_full)
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:titleInfo>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:titleInfo
     el_5 = append_tag(doc, el_4, 'mods:titleInfo', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'ID': 'title'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:titleInfo><mods:title>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:titleInfo/mods:title
     append_tag(doc, el_5, 'mods:title').append(paper.select_one(':scope > paper_title').text.strip())
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:titleInfo><mods:subTitle>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:titleInfo/mods:subTitle
     append_tag(doc, el_5, 'mods:subTitle')
 
     author_seqs: Set[int] = set()
@@ -147,32 +149,32 @@ def create_zenodo_xml(paper: bs4.Tag, doi_prefix: str, doi_full: str, badges: Se
         orcid = author.select_one(':scope > ORCID').text.strip()
         affiliation = author.select_one(':scope > affiliations > affiliation > institution').text.strip()
 
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name
         el_5 = append_tag(doc, el_4, 'mods:name', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'ID': f'artseq-{author_seq - 1}'})
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:namePart>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:namePart[@type='given']
         append_tag(doc, el_5, 'mods:namePart', attrs={'type': 'given'}).append(' '.join(i for i in [first_name, middle_name] if i != ''))
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:namePart>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:namePart[@type='family']
         append_tag(doc, el_5, 'mods:namePart', attrs={'type': 'family'}).append(last_name)
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:termsOfAddress>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:termsOfAddress
         append_tag(doc, el_5, 'mods:namePart', attrs={'type': 'termsOfAddress'}).append('')
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:displayForm>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:displayForm
         append_tag(doc, el_5, 'mods:displayForm').append(display_name)
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:nameIdentifier>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:nameIdentifier
         append_tag(doc, el_5, 'mods:nameIdentifier', attrs={'type': 'ORCID'}).append(orcid)
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:role>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:role
         el_6 = append_tag(doc, el_5, 'mods:role')
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:role><mods:roleTerm>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:role/mods:roleTerm
         append_tag(doc, el_6, 'mods:roleTerm').append('Contributor')
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:nameIdentifier>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:nameIdentifier
         append_tag(doc, el_5, 'mods:nameIdentifier', attrs={'type': 'email'}).append(email)
-        # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:name><mods:affiliation>
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:affiliation
         append_tag(doc, el_5, 'mods:affiliation').append(affiliation)
 
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:subject>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='artifact_type']
     el_5 = append_tag(doc, el_4, 'mods:subject', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'authority': 'artifact_type', 'ID': 'type'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:subject><mods:topic>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='artifact_type']/mods:topic
     append_tag(doc, el_5, 'mods:topic', attrs={'authority': 'artfc-software'}).append('software')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:subject>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='reproducibility-types']
     el_5 = append_tag(doc, el_4, 'mods:subject', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'authority': 'reproducibility-types', 'ID': 'badges'})
 
     for csv_id, xml_id, xml_desc in [
@@ -182,60 +184,60 @@ def create_zenodo_xml(paper: bs4.Tag, doi_prefix: str, doi_full: str, badges: Se
         ('#acm:results-reproduced', 'results_reproduced_v101', 'Results Reproduced'),
     ]:
         if csv_id in badges:
-            # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:subject><mods:topic>
+            # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='reproducibility-types']/mods:topic
             append_tag(doc, el_5, 'mods:topic', attrs={'authority': xml_id}).append(xml_desc)
 
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:relatedItem>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:relatedItem
     el_4.append(bs4.Comment(" FIXME: We don't know the DOI of the original article. "))
     # append_tag(doc, el_4, 'mods:relatedItem', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'displayLabel': 'Related Article', 'xlink:href': '', 'ID': 'relatedDoi01'}).append('')
     el_4.append(bs4.Comment(f' <mods:relatedItem xmlns:mods="http://www.loc.gov/mods/v3" displayLabel="Related Article" xlink:href="{doi_prefix}/???" ID="relatedDoi01"></mods:relatedItem> '))
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension
     el_5 = append_tag(doc, el_4, 'mods:extension', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions
     el_6 = append_tag(doc, el_5, 'atpn:do-extensions', attrs={'xmlns:atpn': 'http://www.atypon.com/digital-objects', 'xsi:schemaLocation': 'http://www.atypon.com/digital-objects http://www.atypon.com/digital-objects/digital-objects.xsd'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:description>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:description
     append_tag(doc, el_6, 'atpn:description').append(bs4.CData(f'<p>Artifact appendix item for {PROCEEDING_NAME}</p>'))
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:copyright>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:copyright
     append_tag(doc, el_6, 'atpn:copyright').append('Author(s)')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:version>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:version
     append_tag(doc, el_6, 'atpn:version').append('1.0')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:softwareDependencies>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:softwareDependencies
     append_tag(doc, el_6, 'atpn:softwareDependencies')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:hardwareDependencies>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:hardwareDependencies
     append_tag(doc, el_6, 'atpn:hardwareDependencies')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:installation>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:installation
     append_tag(doc, el_6, 'atpn:installation')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:otherInstructions>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:otherInstructions
     append_tag(doc, el_6, 'atpn:otherInstructions')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:eiInstallation>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:eiInstallation
     append_tag(doc, el_6, 'atpn:eiInstallation')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:eiParameterization>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:eiParameterization
     append_tag(doc, el_6, 'atpn:eiParameterization')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:eiEvaluation>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:eiEvaluation
     append_tag(doc, el_6, 'atpn:eiEvaluation')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:eiWorkflow>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:eiWorkflow
     append_tag(doc, el_6, 'atpn:eiWorkflow')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:eiOtherInstructions>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:eiOtherInstructions
     append_tag(doc, el_6, 'atpn:eiOtherInstructions')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:dataDocumentation>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:dataDocumentation
     append_tag(doc, el_6, 'atpn:dataDocumentation')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:provenance>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:provenance
     append_tag(doc, el_6, 'atpn:provenance').append('')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:accessCondition>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:accessCondition
     append_tag(doc, el_6, 'atpn:accessCondition').append('free')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:licenseUrl>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:licenseUrl
     append_tag(doc, el_6, 'atpn:licenseUrl')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:keywords>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:keywords
     append_tag(doc, el_6, 'atpn:keywords', attrs={'nested-label': 'NONE'}).append('')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:extension><atpn:do-extensions><atpn:baseDoi>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:extension/atpn:do-extensions/atpn:baseDoi
     append_tag(doc, el_6, 'atpn:baseDoi').append(f'{doi_prefix}/artifact-doe-class')
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:originInfo>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:originInfo
     el_5 = append_tag(doc, el_4, 'mods:originInfo', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3'})
-    # <mets><mets:dmdSec><mets:mdWrap><mets:xmlData><mods><mods:originInfo><mods:dateIssued>
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:originInfo/mods:dateIssued
     append_tag(doc, el_5, 'mods:dateIssued', attrs={'encoding': 'iso8601'}).append(f'{DATE_ISSUED[0]}-{DATE_ISSUED[1]:02}-{DATE_ISSUED[2]:02}')
-    # <mets><mets:structMap>
+    # /mets/mets:structMap
     el_1 = append_tag(doc, el_0, 'mets:structMap', attrs={'xmlns:mets': 'http://www.loc.gov/METS/'})
-    # <mets><mets:structMap><mets:div>
+    # /mets/mets:structMap/mets:div
     append_tag(doc, el_1, 'mets:div').append('')
     return doc
 
