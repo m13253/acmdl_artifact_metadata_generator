@@ -12,4 +12,6 @@ The output files will be located in `output` folder. Each submission will genera
 
 ## Acknowledgements
 
-Thanks [Anjo Vahldiek-Oberwagner](https://github.com/vahldiek/acmdl_artifact_metadata) for his reference program. However, this program is a complete rewrite.
+Thanks [Anjo Vahldiek-Oberwagner](https://github.com/vahldiek/acmdl_artifact_metadata) for his program as my reference.
+
+However, this program is a complete rewrite and does not use his code.
