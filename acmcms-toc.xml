@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<erights_record>
+  <parent_data>
+    <proceeding>2023-125305.13115</proceeding>
+    <volume/>
+    <issue/>
+    <issue_date/>
+    <source>HotCRP.com</source>
+  </parent_data>
+  <paper>
+    <paper_type>Full Paper</paper_type>
+    <art_submission_date/>
+    <art_approval_date/>
+    <paper_title>Example Title</paper_title>
+    <event_tracking_number>ppopp23-p999</event_tracking_number>
+    <published_article_number/>
+    <start_page/>
+    <end_page/>
+    <authors>
+      <author>
+        <prefix/>
+        <first_name>Example</first_name>
+        <middle_name/>
+        <last_name>Name #1</last_name>
+        <suffix/>
+        <affiliations>
+          <affiliation>
+            <department/>
+            <institution>Example University #1</institution>
+            <city/>
+            <country>Example Country</country>
+            <sequence_no>1</sequence_no>
+          </affiliation>
+        </affiliations>
+        <email_address>****@*******.***</email_address>
+        <sequence_no>1</sequence_no>
+        <contact_author>Y</contact_author>
+        <ORCID>****-****-****-****</ORCID>
+      </author>
+      <author>
+        <prefix/>
+        <first_name>Example</first_name>
+        <middle_name/>
+        <last_name>Name #2</last_name>
+        <suffix/>
+        <affiliations>
+          <affiliation>
+            <department/>
+            <institution>Example University #2</institution>
+            <city/>
+            <country>Example Country</country>
+            <sequence_no>1</sequence_no>
+          </affiliation>
+        </affiliations>
+        <email_address>****@*******.***</email_address>
+        <sequence_no>2</sequence_no>
+        <contact_author>N</contact_author>
+        <ORCID/>
+      </author>
+    </authors>
+  </paper>
+</erights_record>
