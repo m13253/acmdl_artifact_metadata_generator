@@ -155,7 +155,7 @@ def create_zenodo_xml(paper: bs4.Tag, doi_prefix: str, doi_full: str, badges: Se
         append_tag(doc, el_5, 'mods:namePart', attrs={'type': 'given'}).append(' '.join(i for i in [first_name, middle_name] if i != ''))
         # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:namePart[@type='family']
         append_tag(doc, el_5, 'mods:namePart', attrs={'type': 'family'}).append(last_name)
-        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:termsOfAddress
+        # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:namePart[@type='termsOfAddress']
         append_tag(doc, el_5, 'mods:namePart', attrs={'type': 'termsOfAddress'}).append('')
         # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:displayForm
         append_tag(doc, el_5, 'mods:displayForm').append(display_name)
@@ -170,11 +170,11 @@ def create_zenodo_xml(paper: bs4.Tag, doi_prefix: str, doi_full: str, badges: Se
         # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:name/mods:affiliation
         append_tag(doc, el_5, 'mods:affiliation').append(affiliation)
 
-    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='artifact_type']
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@ID='type']
     el_5 = append_tag(doc, el_4, 'mods:subject', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'authority': 'artifact_type', 'ID': 'type'})
-    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='artifact_type']/mods:topic
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@ID='type']/mods:topic
     append_tag(doc, el_5, 'mods:topic', attrs={'authority': 'artfc-software'}).append('software')
-    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='reproducibility-types']
+    # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@ID='badges']
     el_5 = append_tag(doc, el_4, 'mods:subject', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'authority': 'reproducibility-types', 'ID': 'badges'})
 
     for csv_id, xml_id, xml_desc in [
@@ -184,7 +184,7 @@ def create_zenodo_xml(paper: bs4.Tag, doi_prefix: str, doi_full: str, badges: Se
         ('#acm:results-reproduced', 'results_reproduced_v101', 'Results Reproduced'),
     ]:
         if csv_id in badges:
-            # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@authority='reproducibility-types']/mods:topic
+            # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@ID='badges']/mods:topic
             append_tag(doc, el_5, 'mods:topic', attrs={'authority': xml_id}).append(xml_desc)
 
     # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:relatedItem
