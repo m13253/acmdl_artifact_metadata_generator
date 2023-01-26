@@ -4,6 +4,12 @@ Small program to generate XML metadata for ACMDL artifacts.
 
 ACMDL uses a very complicated XML format for metadata. This program may help you generate them.
 
+## Third-party dependencies
+
+Please use `pip` to install the following dependencies:
+* [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
+* [lxml](https://pypi.org/project/lxml/)
+
 ## Usage
 
 To use this program, you need to modify the configuration options in `metadata_generator.py`, and also provide `artifacts.csv` and `acmcms-toc.xml`. This repository includes two sample files for your reference.
