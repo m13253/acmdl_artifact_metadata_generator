@@ -7,7 +7,7 @@ import html
 import lxml  # noqa: F401, make sure BeautifulSoup can use lxml
 import os
 import re
-from typing import Dict, List, Optional, Tuple, Set, TypeVar
+from typing import Dict, List, Optional, Tuple, Set, TypeVar, Union
 import zipfile
 
 
@@ -78,12 +78,6 @@ def main() -> None:
             print(f'(Info: Skipping #{tracking_number}.)')
             continue
         arti_doi = DOI(arti_url)
-
-        # Make sure the paper DOI is a valid DOI
-        doi = DOI(unwrap(
-            arti_row.get('DOI'),
-            ValueError("Column 'DOI' is missing in CSV")
-        ).strip())
 
         manifest_xml = create_manifest_xml(arti_doi)
         zenodo_xml = create_zenodo_xml(toc_paper, arti_row)
@@ -237,25 +231,22 @@ def create_zenodo_xml(toc_paper: bs4.Tag, arti_row: Dict[str, str]) -> bs4.Tag:
     # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@ID='badges']
     el_5 = append_tag(doc, el_4, 'mods:subject', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3', 'authority': 'reproducibility-types', 'ID': 'badges'})
 
-    badges = {
-        value
-        for column in ['Available', 'Functional', 'Reusable', 'Replicated', 'Reproduced', 'Best']
-        for value in [unwrap(
-            arti_row.get(column),
-            ValueError(f'Column {column!r} is missing in CSV')
-        ).strip()]
-        if value != ''
-    }
-    for csv_id, xml_id, xml_desc in [
-        ('#acm:artifacts-available', 'artifacts_available_v101', 'Artifacts Available'),
-        ('#acm:artifacts-functional', 'artifacts_evaluated_functional_v101', 'Artifacts Evaluated — Functional'),
-        ('#acm:artifacts-reusable', 'artifacts_evaluated_reusable_v101', 'Artifacts Evaluated — Reusable'),
-        ('#acm:results-replicated', 'results_replicated_v101', 'Results Replicated'),
-        ('#acm:results-reproduced', 'results_reproduced_v101', 'Results Reproduced'),
+    for csv_column, csv_id, xml_id, xml_desc in [
+        ('Available', '#acm:artifacts-available', 'artifacts_available_v101', 'Artifacts Available'),
+        ('Functional', '#acm:artifacts-functional', 'artifacts_evaluated_functional_v101', 'Artifacts Evaluated — Functional'),
+        ('Reusable', '#acm:artifacts-reusable', 'artifacts_evaluated_reusable_v101', 'Artifacts Evaluated — Reusable'),
+        ('Replicated', '#acm:results-replicated', 'results_replicated_v101', 'Results Replicated'),
+        ('Reproduced', '#acm:results-reproduced', 'results_reproduced_v101', 'Results Reproduced'),
     ]:
-        if csv_id in badges:
+        value = unwrap(
+            arti_row.get(csv_column),
+            ValueError(f'Column {csv_column!r} is missing in CSV')
+        ).strip()
+        if value == csv_id:
             # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:subject[@ID='badges']/mods:topic
             append_tag(doc, el_5, 'mods:topic', attrs={'authority': xml_id}).append(xml_desc)
+        elif value != '':
+            raise ValueError(f'Unexpected value {value!r} at column {csv_column!r}, should be either {csv_id!r} or empty')
 
     # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:relatedItem
     doi = DOI(unwrap(
@@ -365,8 +356,8 @@ class DOI:
 
 
 class MyFormatter(bs4.formatter.XMLFormatter):
-    def __init__(self, *args, **kwargs) -> None:
-        kwargs['indent'] = kwargs.get('indent', 2)
+    def __init__(self, indent: Union[int, str] = 2, *args, **kwargs) -> None:
+        kwargs['indent'] = kwargs.get('indent', indent)  # Make VS Code's type checker happy
         super().__init__(*args, **kwargs)
 
     def attributes(self, tag: bs4.Tag) -> List[Tuple[str, Optional[str]]]:
