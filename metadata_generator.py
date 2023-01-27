@@ -7,7 +7,7 @@ import html
 import lxml  # noqa: F401, make sure BeautifulSoup can use lxml
 import os
 import re
-from typing import Dict, List, Optional, Tuple, Set, TypeVar, Union
+from typing import Dict, List, Optional, Set, Tuple, TypeVar, Union
 import zipfile
 
 
@@ -297,7 +297,7 @@ def create_zenodo_xml(toc_paper: bs4.Tag, arti_row: Dict[str, str]) -> bs4.Tag:
     # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:originInfo
     el_5 = append_tag(doc, el_4, 'mods:originInfo', attrs={'xmlns:mods': 'http://www.loc.gov/mods/v3'})
     # /mets/mets:dmdSec/mets:mdWrap/mets:xmlData/mods/mods:originInfo/mods:dateIssued
-    append_tag(doc, el_5, 'mods:dateIssued', attrs={'encoding': 'iso8601'}).append(f'{DATE_ISSUED[0]}-{DATE_ISSUED[1]:02}-{DATE_ISSUED[2]:02}')
+    append_tag(doc, el_5, 'mods:dateIssued', attrs={'encoding': 'iso8601'}).append(f'{DATE_ISSUED[0]:04}-{DATE_ISSUED[1]:02}-{DATE_ISSUED[2]:02}')
     # /mets/mets:structMap
     el_1 = append_tag(doc, el_0, 'mets:structMap', attrs={'xmlns:mets': 'http://www.loc.gov/METS/'})
     # /mets/mets:structMap/mets:div
