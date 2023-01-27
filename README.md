@@ -16,7 +16,7 @@ To use this program, you need to modify the configuration options in `metadata_g
 
 Then, run `python metadata_generator.py` to generate the metadata.
 
-The output files will be located in `output` folder. Each submission will generate a ZIP file, each containing two XML files.
+The output files will be located in `artifacts-metadata` folder. Each submission will generate a ZIP file, each containing two XML files.
 
 ## Acknowledgements
 

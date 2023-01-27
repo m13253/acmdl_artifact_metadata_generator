@@ -1,2 +1,2 @@
-ppopp23-p#,Title,Available URL,Available,Functional,Reusable,Reproduced,Best
-999,Example Title,https://doi.org/10.5281/zenodo.9999999,#acm:artifacts-available,#acm:artifacts-functional,#acm:artifacts-reusable,#acm:results-reproduced,#BestArtifactNominee
+ppopp23-p#,Title,DOI,Available URL,Available,Functional,Reusable,Replicated,Reproduced,Best
+999,Example Title,10.1145/3572848.9999999,https://doi.org/10.5281/zenodo.9999999,#acm:artifacts-available,#acm:artifacts-functional,#acm:artifacts-reusable,#acm:results-replicated,#acm:results-reproduced,#BestArtifactNominee
