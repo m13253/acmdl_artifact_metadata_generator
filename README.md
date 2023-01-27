@@ -18,6 +18,12 @@ Then, run `python metadata_generator.py` to generate the metadata.
 
 The output files will be located in `artifacts-metadata` folder. Each submission will generate a ZIP file, each containing two XML files.
 
+## Compatibility
+
+This program is written in Python 3.11. It may or may not work with earlier versions of Python 3, but I have not tested it.
+
+Compatibility patches are welcome.
+
 ## Acknowledgements
 
 Thanks [Anjo Vahldiek-Oberwagner](https://github.com/vahldiek/acmdl_artifact_metadata) for his program as my reference.
