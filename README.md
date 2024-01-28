@@ -14,6 +14,8 @@ Please use `pip` to install the following dependencies:
 
 To use this program, you need to modify the configuration options in `metadata_generator.py`, and also provide `artifacts.csv` and `acmcms-toc.xml`. This repository includes two sample files for your reference.
 
+If the available URL of any artifact entry is `Unavailable` (spelled exactly), that entry will be skipped.
+
 Then, run `python metadata_generator.py` to generate the metadata.
 
 The output files will be located in `artifacts-metadata` folder. Each submission will generate a ZIP file, each containing two XML files.
